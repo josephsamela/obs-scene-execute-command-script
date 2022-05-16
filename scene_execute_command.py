@@ -1,5 +1,6 @@
 import obspython as obs
-import os
+import subprocess
+import shlex
 settings = {}
 
 def script_description():
@@ -45,9 +46,10 @@ def handle_scene_change():
     if scene_enabled:
         command = obs.obs_data_get_string(settings, "command")
         scene_value = obs.obs_data_get_string(settings, f"scene_value_{scene_name}")
-        scene_command = command.replace("SCENE_VALUE", scene_value)
+        scene_command = shlex.split(command.replace("SCENE_VALUE", scene_value))
         print(f"Activating {scene_name}. Executing command: {scene_command}")
-        os.system(scene_command)
+        result = subprocess.run(scene_command, shell=True)
+        print(result)
     else:
         print(f"Activating {scene_name}. Command execution is disabled for this scene.")
     
